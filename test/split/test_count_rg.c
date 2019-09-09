@@ -24,7 +24,7 @@ DEALINGS IN THE SOFTWARE.  */
 
 #include <config.h>
 
-#include "../../bam_split.c"
+#include "../../src/bam_split.c"
 #include "../test.h"
 #include <stdlib.h>
 #include <unistd.h>

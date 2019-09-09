@@ -24,7 +24,7 @@ DEALINGS IN THE SOFTWARE.  */
 
 #include <config.h>
 
-#include "../../bam_sort.c"
+#include "../../src/bam_sort.c"
 
 void dump_rtrans(int* rtrans, int n, int n_targets) {
     printf("->n_targets:(%d)\n", n_targets);

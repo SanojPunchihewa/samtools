@@ -24,7 +24,7 @@ DEALINGS IN THE SOFTWARE.  */
 
 #include <config.h>
 
-#include "../../bam_sort.c"
+#include "../../src/bam_sort.c"
 #include <assert.h>
 #include <regex.h>
 

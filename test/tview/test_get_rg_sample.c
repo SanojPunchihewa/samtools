@@ -24,7 +24,7 @@ DEALINGS IN THE SOFTWARE.  */
 
 #include <config.h>
 
-#include "../../bam_tview.c"
+#include "../../src/bam_tview.c"
 #include <stdbool.h>
 
 const char header_1[] =
