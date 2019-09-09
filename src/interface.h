@@ -1,0 +1,1 @@
+int init_samtools(int argc, char *argv[]);
