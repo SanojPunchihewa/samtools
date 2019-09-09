@@ -31,10 +31,10 @@ DEALINGS IN THE SOFTWARE.  */
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "htslib/thread_pool.h"
+#include <htslib/thread_pool.h>
 #include "sam_opts.h"
-#include "htslib/kstring.h"
-#include "htslib/sam.h"
+#include <htslib/kstring.h>
+#include <htslib/sam.h>
 #include "samtools.h"
 
 /*

@@ -28,9 +28,9 @@ DEALINGS IN THE SOFTWARE.  */
 #include <math.h>
 #include <stdio.h>
 #include "bam.h" // for bam_get_library
-#include "htslib/sam.h"
-#include "htslib/khash.h"
-#include "htslib/klist.h"
+#include <htslib/sam.h>
+#include <htslib/khash.h>
+#include <htslib/klist.h>
 #include "samtools.h"
 
 #define QUEUE_CLEAR_SIZE 0x100000

@@ -30,10 +30,10 @@ DEALINGS IN THE SOFTWARE.  */
 #include <assert.h>
 #include <getopt.h>
 
-#include "htslib/bgzf.h"
-#include "htslib/sam.h"
-#include "htslib/hfile.h"
-#include "htslib/cram.h"
+#include <htslib/bgzf.h>
+#include <htslib/sam.h>
+#include <htslib/hfile.h>
+#include <htslib/cram.h>
 #include "samtools.h"
 
 #define BUF_SIZE 0x10000

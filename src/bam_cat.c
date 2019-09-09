@@ -42,10 +42,10 @@ Illumina.
 #include <string.h>
 #include <strings.h>
 
-#include "htslib/bgzf.h"
-#include "htslib/sam.h"
-#include "htslib/cram.h"
-#include "htslib/kstring.h"
+#include <htslib/bgzf.h>
+#include <htslib/sam.h>
+#include <htslib/cram.h>
+#include <htslib/kstring.h>
 #include "samtools.h"
 #include "sam_opts.h"
 

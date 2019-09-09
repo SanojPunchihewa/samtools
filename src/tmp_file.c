@@ -40,8 +40,8 @@ DEALINGS IN THE SOFTWARE
 #endif /* _WIN32 */
 
 #include "tmp_file.h"
-#include "htslib/sam.h"
-
+#include <htslib/sam.h>
+#include <lz4.h>
 
 static void tmp_print_error(tmp_file_t *tmp, const char *fmt, ...) {
     va_list argp;

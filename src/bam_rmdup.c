@@ -30,14 +30,14 @@ DEALINGS IN THE SOFTWARE.  */
 #include <stdio.h>
 #include <zlib.h>
 #include <unistd.h>
-#include "htslib/sam.h"
+#include <htslib/sam.h>
 #include "sam_opts.h"
 #include "samtools.h"
 #include "bam.h" // for bam_get_library
 
 typedef bam1_t *bam1_p;
 
-#include "htslib/khash.h"
+#include <htslib/khash.h>
 KHASH_SET_INIT_STR(name)
 KHASH_MAP_INIT_INT64(pos, bam1_p)
 

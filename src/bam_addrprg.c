@@ -27,7 +27,7 @@ DEALINGS IN THE SOFTWARE.  */
 #include <htslib/sam.h>
 #include <htslib/kstring.h>
 #include "samtools.h"
-#include "htslib/thread_pool.h"
+#include <htslib/thread_pool.h>
 #include "sam_opts.h"
 #include <string.h>
 #include <stdio.h>

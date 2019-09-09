@@ -25,8 +25,8 @@ DEALINGS IN THE SOFTWARE.  */
 #ifndef SAMTOOLS_H
 #define SAMTOOLS_H
 
-#include "htslib/hts_defs.h"
-#include "htslib/sam.h"
+#include <htslib/hts_defs.h>
+#include <htslib/sam.h>
 
 const char *samtools_version(void);
 

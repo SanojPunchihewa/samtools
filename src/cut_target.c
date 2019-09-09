@@ -28,9 +28,9 @@ DEALINGS IN THE SOFTWARE.  */
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include "htslib/hts.h"
-#include "htslib/sam.h"
-#include "htslib/faidx.h"
+#include <htslib/hts.h>
+#include <htslib/sam.h>
+#include <htslib/faidx.h>
 #include "samtools.h"
 #include "sam_opts.h"
 

@@ -30,10 +30,10 @@ DEALINGS IN THE SOFTWARE.  */
 #include <string.h>
 #include <ctype.h>
 #include <limits.h>
-#include "htslib/faidx.h"
-#include "htslib/sam.h"
-#include "htslib/kstring.h"
-#include "htslib/thread_pool.h"
+#include <htslib/faidx.h>
+#include <htslib/sam.h>
+#include <htslib/kstring.h>
+#include <htslib/thread_pool.h>
 #include "sam_opts.h"
 #include "samtools.h"
 

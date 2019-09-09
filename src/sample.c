@@ -28,7 +28,7 @@ DEALINGS IN THE SOFTWARE.  */
 #include <stdlib.h>
 #include <string.h>
 #include "sample.h"
-#include "htslib/khash.h"
+#include <htslib/khash.h>
 KHASH_MAP_INIT_STR(sm, int)
 
 bam_sample_t *bam_smpl_init(void)

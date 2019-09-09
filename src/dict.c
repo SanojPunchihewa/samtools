@@ -28,8 +28,8 @@ DEALINGS IN THE SOFTWARE.  */
 #include <unistd.h>
 #include <zlib.h>
 #include <getopt.h>
-#include "htslib/kseq.h"
-#include "htslib/hts.h"
+#include <htslib/kseq.h>
+#include <htslib/hts.h>
 
 KSEQ_INIT(gzFile, gzread)
 

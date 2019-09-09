@@ -38,12 +38,12 @@ DEALINGS IN THE SOFTWARE.  */
 #include <getopt.h>
 #include <assert.h>
 #include <pthread.h>
-#include "htslib/ksort.h"
-#include "htslib/hts_os.h"
-#include "htslib/khash.h"
-#include "htslib/klist.h"
-#include "htslib/kstring.h"
-#include "htslib/sam.h"
+#include <htslib/ksort.h>
+#include <htslib/hts_os.h>
+#include <htslib/khash.h>
+#include <htslib/klist.h>
+#include <htslib/kstring.h>
+#include <htslib/sam.h>
 #include "sam_opts.h"
 #include "samtools.h"
 

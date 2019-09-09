@@ -36,7 +36,7 @@ DEALINGS IN THE SOFTWARE.  */
 #include <htslib/khash.h>
 #include <htslib/kstring.h>
 #include <htslib/cram.h>
-#include "htslib/thread_pool.h"
+#include <htslib/thread_pool.h>
 #include "sam_opts.h"
 #include "samtools.h"
 

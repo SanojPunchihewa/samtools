@@ -31,14 +31,14 @@ DEALINGS IN THE SOFTWARE.  */
 #include <stdint.h>
 #include <math.h>
 #include <zlib.h>
-#include "htslib/hts.h"
-#include "htslib/sam.h"
-#include "htslib/kstring.h"
+#include <htslib/hts.h>
+#include <htslib/sam.h>
+#include <htslib/kstring.h>
 #include "sam_opts.h"
 #include "samtools.h"
-#include "htslib/hts_os.h"
+#include <htslib/hts_os.h>
 
-#include "htslib/kseq.h"
+#include <htslib/kseq.h>
 KSTREAM_INIT(gzFile, gzread, 16384)
 
 #define MAX_VARS 256
@@ -75,13 +75,13 @@ typedef struct {
 
 #define rseq_lt(a,b) ((a)->vpos < (b)->vpos)
 
-#include "htslib/khash.h"
+#include <htslib/khash.h>
 KHASH_SET_INIT_INT64(set64)
 KHASH_MAP_INIT_INT64(64, frag_t)
 
 typedef khash_t(64) nseq_t;
 
-#include "htslib/ksort.h"
+#include <htslib/ksort.h>
 KSORT_INIT(rseq, frag_p, rseq_lt)
 
 static inline uint64_t X31_hash_string(const char *s)

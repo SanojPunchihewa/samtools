@@ -32,7 +32,7 @@ DEALINGS IN THE SOFTWARE.  */
 #include <limits.h>
 #include <getopt.h>
 
-#include "htslib/sam.h"
+#include <htslib/sam.h>
 #include "samtools.h"
 #include "sam_opts.h"
 

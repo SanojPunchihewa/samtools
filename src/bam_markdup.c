@@ -37,13 +37,13 @@ Copyright (c) 2009,2018 The Broad Institute.  MIT license.
 #include <time.h>
 #include <sys/stat.h>
 #include <math.h>
-#include "htslib/thread_pool.h"
-#include "htslib/sam.h"
+#include <htslib/thread_pool.h>
+#include <htslib/sam.h>
 #include "sam_opts.h"
 #include "samtools.h"
-#include "htslib/khash.h"
-#include "htslib/klist.h"
-#include "htslib/kstring.h"
+#include <htslib/khash.h>
+#include <htslib/klist.h>
+#include <htslib/kstring.h>
 #include "tmp_file.h"
 
 

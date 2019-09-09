@@ -29,7 +29,7 @@ DEALINGS IN THE SOFTWARE
 #define _TMP_SAM_FILE_H_
 
 #include <lz4.h>
-#include "htslib/sam.h"
+#include <htslib/sam.h>
 
 #ifdef _cplusplus
 extern "C" {

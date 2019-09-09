@@ -33,10 +33,10 @@ DEALINGS IN THE SOFTWARE.  */
 #include <math.h>
 #include <inttypes.h>
 #include <getopt.h>
-#include "htslib/sam.h"
-#include "htslib/faidx.h"
-#include "htslib/khash.h"
-#include "htslib/thread_pool.h"
+#include <htslib/sam.h>
+#include <htslib/faidx.h>
+#include <htslib/khash.h>
+#include <htslib/thread_pool.h>
 #include "samtools.h"
 #include "sam_opts.h"
 #include "bedidx.h"

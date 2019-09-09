@@ -28,10 +28,10 @@ DEALINGS IN THE SOFTWARE.  */
 #include <assert.h>
 #include <ctype.h>
 #include <string.h>
-#include "htslib/hts.h"
-#include "htslib/sam.h"
+#include <htslib/hts.h>
+#include <htslib/sam.h>
 #include "bam2bcf.h"
-#include "htslib/khash.h"
+#include <htslib/khash.h>
 KHASH_SET_INIT_STR(rg)
 
 #include "htslib/ksort.h"

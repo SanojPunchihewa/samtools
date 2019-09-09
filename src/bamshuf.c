@@ -35,13 +35,13 @@ DEALINGS IN THE SOFTWARE.  */
 #  define WIN32_LEAN_AND_MEAN
 #  include <windows.h>
 #endif
-#include "htslib/sam.h"
-#include "htslib/hts.h"
-#include "htslib/ksort.h"
+#include <htslib/sam.h>
+#include <htslib/hts.h>
+#include <htslib/ksort.h>
 #include "samtools.h"
-#include "htslib/thread_pool.h"
+#include <htslib/thread_pool.h>
 #include "sam_opts.h"
-#include "htslib/khash.h"
+#include <htslib/khash.h>
 
 #define DEF_CLEVEL 1
 

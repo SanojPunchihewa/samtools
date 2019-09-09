@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.  */
 #ifndef BAM_SAM_H
 #define BAM_SAM_H
 
-#include "htslib/sam.h"
+#include <htslib/sam.h>
 #include "bam.h"
 
 /*!

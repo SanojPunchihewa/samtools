@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.  */
 #ifndef BAM_SAMPLE_H
 #define BAM_SAMPLE_H
 
-#include "htslib/kstring.h"
+#include <htslib/kstring.h>
 
 typedef struct {
     int n, m;

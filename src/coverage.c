@@ -50,8 +50,8 @@ DEALINGS IN THE SOFTWARE.  */
 #include <sys/ioctl.h>
 #endif
 
-#include "htslib/sam.h"
-#include "htslib/hts.h"
+#include <htslib/sam.h>
+#include <htslib/hts.h>
 #include "samtools.h"
 #include "sam_opts.h"
 

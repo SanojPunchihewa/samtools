@@ -31,13 +31,13 @@ DEALINGS IN THE SOFTWARE.  */
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "htslib/kstring.h"
-#include "htslib/sam.h"
-#include "htslib/thread_pool.h"
+#include <htslib/kstring.h>
+#include <htslib/sam.h>
+#include <htslib/thread_pool.h>
 #include "samtools.h"
 #include "sam_opts.h"
 
-#include "htslib/kseq.h"
+#include <htslib/kseq.h>
 KSTREAM_INIT(gzFile, gzread, 16384)
 
 typedef struct {

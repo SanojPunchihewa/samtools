@@ -37,7 +37,7 @@ DEALINGS IN THE SOFTWARE.  */
 #include <stdio.h>
 #include <limits.h>
 #include <unistd.h>
-#include "htslib/sam.h"
+#include <htslib/sam.h>
 #include "samtools.h"
 #include "sam_opts.h"
 

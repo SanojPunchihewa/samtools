@@ -33,10 +33,10 @@ DEALINGS IN THE SOFTWARE.  */
 #include <zlib.h>
 #include "bedidx.h"
 
-#include "htslib/ksort.h"
+#include <htslib/ksort.h>
 KSORT_INIT_GENERIC(uint64_t)
 
-#include "htslib/kseq.h"
+#include <htslib/kseq.h>
 KSTREAM_INIT(gzFile, gzread, 8192)
 
 /*! @typedef
@@ -58,7 +58,7 @@ typedef struct {
     int filter;
 } bed_reglist_t;
 
-#include "htslib/khash.h"
+#include <htslib/khash.h>
 KHASH_MAP_INIT_STR(reg, bed_reglist_t)
 
 typedef kh_reg_t reghash_t;

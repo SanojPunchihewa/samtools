@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.  */
 #ifndef BEDIDX_H
 #define BEDIDX_H
 
-#include "htslib/hts.h"
+#include <htslib/hts.h>
 
 #define LIDX_SHIFT 13
 #define ALL 0

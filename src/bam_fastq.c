@@ -33,11 +33,11 @@ DEALINGS IN THE SOFTWARE.  */
 #include <inttypes.h>
 #include <unistd.h>
 
-#include "htslib/sam.h"
-#include "htslib/klist.h"
-#include "htslib/kstring.h"
-#include "htslib/bgzf.h"
-#include "htslib/thread_pool.h"
+#include <htslib/sam.h>
+#include <htslib/klist.h>
+#include <htslib/kstring.h>
+#include <htslib/bgzf.h>
+#include <htslib/thread_pool.h>
 #include "samtools.h"
 #include "sam_opts.h"
 

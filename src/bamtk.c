@@ -29,9 +29,10 @@ DEALINGS IN THE SOFTWARE.  */
 #include <fcntl.h>
 #include <string.h>
 
-#include "htslib/hts.h"
+#include <htslib/hts.h>
 #include "samtools.h"
 #include "version.h"
+#include "interface.h"
 
 int bam_taf2baf(int argc, char *argv[]);
 int bam_mpileup(int argc, char *argv[]);
@@ -143,7 +144,7 @@ static void usage(FILE *fp)
 int _CRT_glob = 0;
 #endif
 
-int main(int argc, char *argv[])
+int init_samtools(int argc, char *argv[])
 {
 #ifdef _WIN32
     setmode(fileno(stdout), O_BINARY);

@@ -29,7 +29,7 @@ DEALINGS IN THE SOFTWARE.  */
 #include <ctype.h>
 #include <errno.h>
 #include "bam.h"
-#include "htslib/kstring.h"
+#include <htslib/kstring.h>
 
 char *bam_format1(const bam_header_t *header, const bam1_t *b)
 {
