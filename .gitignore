@@ -28,3 +28,6 @@ lib*.a
 .autotools
 .cproject
 .project
+
+/build-android
+/build
