@@ -38,6 +38,7 @@ DEALINGS IN THE SOFTWARE.  */
 
 #include "samtools.h"
 #include "sam_opts.h"
+#include "logger.h"
 
 #define BAM_LIDX_SHIFT    14
 
@@ -81,22 +82,22 @@ int bam_index(int argc, char *argv[])
         return 0;
 
     case -2:
-        print_error_errno("index", "failed to open \"%s\"", argv[optind]);
+        ERROR("[index] failed to open \"%s\"", argv[optind]);
         break;
 
     case -3:
-        print_error("index", "\"%s\" is in a format that cannot be usefully indexed", argv[optind]);
+        ERROR("[index] \"%s\" is in a format that cannot be usefully indexed", argv[optind]);
         break;
 
     case -4:
         if (argv[optind+1])
-            print_error("index", "failed to create or write index \"%s\"", argv[optind+1]);
+            ERROR("[index] failed to create or write index \"%s\"", argv[optind+1]);
         else
-            print_error("index", "failed to create or write index");
+            ERROR("%s", "[index] failed to create or write index");
         break;
 
     default:
-        print_error_errno("index", "failed to create index for \"%s\"", argv[optind]);
+        ERROR("[index] failed to create index for \"%s\"", argv[optind]);
         break;
     }
 
@@ -135,7 +136,7 @@ int slow_idxstats(samFile *fp, sam_hdr_t *header) {
         if (b->core.tid != last_tid) {
             if (last_tid >= -1) {
                 if (counts[b->core.tid][0] + counts[b->core.tid][1]) {
-                    print_error("idxstats", "file is not position sorted");
+                    ERROR("%s", "[idxstats] file is not position sorted");
                     free(count0);
                     return -1;
                 }
@@ -200,12 +201,12 @@ int bam_idxstats(int argc, char *argv[])
 
     fp = sam_open_format(argv[optind], "r", &ga.in);
     if (fp == NULL) {
-        print_error_errno("idxstats", "failed to open \"%s\"", argv[optind]);
+        ERROR("[idxstats] failed to open \"%s\"", argv[optind]);
         return 1;
     }
     header = sam_hdr_read(fp);
     if (header == NULL) {
-        print_error("idxstats", "failed to read header for \"%s\"", argv[optind]);
+        ERROR("[idxstats] failed to read header for \"%s\"", argv[optind]);
         return 1;
     }
 
@@ -215,13 +216,13 @@ int bam_idxstats(int argc, char *argv[])
             hts_set_threads(fp, ga.nthreads);
 
         if (slow_idxstats(fp, header) < 0) {
-            print_error("idxstats", "failed to process \"%s\"", argv[optind]);
+            ERROR("[idxstats] failed to process \"%s\"", argv[optind]);
             return 1;
         }
     } else {
         idx = sam_index_load(fp, argv[optind]);
         if (idx == NULL) {
-            print_error("idxstats", "fail to load index for \"%s\", "
+            ERROR("[idxstats] fail to load index for \"%s\", "
                         "reverting to slow method", argv[optind]);
             goto slow_method;
         }

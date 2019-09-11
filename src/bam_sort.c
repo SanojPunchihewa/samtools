@@ -46,7 +46,7 @@ DEALINGS IN THE SOFTWARE.  */
 #include <htslib/sam.h>
 #include "sam_opts.h"
 #include "samtools.h"
-
+#include "logger.h"
 
 // Struct which contains the a record, and the pointer to the sort tag (if any) or
 // a combined ref / position / strand.
@@ -317,7 +317,7 @@ static int trans_tbl_add_hd(merged_header_t* merged_hdr,
 
     res = sam_hdr_find_hd(translate, &hd_line);
     if (res < -1) {
-        print_error("merge", "failed to get @HD line from header");
+        ERROR("%s", "[merge] failed to get @HD line from header");
         return -1;
     }
 
@@ -325,7 +325,7 @@ static int trans_tbl_add_hd(merged_header_t* merged_hdr,
         return 0;
 
     if (sam_hdr_add_lines(merged_hdr->hdr, hd_line.s, hd_line.l) < 0) {
-        print_error("merge", "failed to add @HD line to new header");
+        ERROR("%s", "[merge] failed to add @HD line to new header");
         free(hd_line.s);
         return -1;
     }
@@ -365,13 +365,13 @@ static int trans_tbl_add_sq(merged_header_t* merged_hdr, sam_hdr_t *translate,
         sq_sn.l = 0;
         res = sam_hdr_find_tag_pos(translate, "SQ", i, "SN", &sq_sn);
         if (res < 0) {
-            print_error("merge", "failed to get @SQ SN #%d from header", i + 1);
+            ERROR("[merge] failed to get @SQ SN #%d from header", i + 1);
             goto fail;
         }
 
         trans_tid = sam_hdr_name2tid(merged_hdr->hdr, sq_sn.s);
         if (trans_tid < -1) {
-            print_error("merge", "failed to lookup ref");
+            ERROR("%s", "[merge] failed to lookup ref");
             goto fail;
         }
 
@@ -380,7 +380,7 @@ static int trans_tbl_add_sq(merged_header_t* merged_hdr, sam_hdr_t *translate,
             sq_line.l = 0;
             res = sam_hdr_find_line_id(translate, "SQ", "SN", sq_sn.s, &sq_line);
             if (res < 0) {
-                print_error("merge", "failed to get @SQ SN:%s from header", sq_sn.s);
+                ERROR("[merge] failed to get @SQ SN:%s from header", sq_sn.s);
                 goto fail;
             }
 
@@ -388,7 +388,7 @@ static int trans_tbl_add_sq(merged_header_t* merged_hdr, sam_hdr_t *translate,
 
             res = sam_hdr_add_lines(merged_hdr->hdr, sq_line.s, sq_line.l);
             if (res < 0) {
-                print_error("merge", "failed to add @SQ SN:%s to new header", sq_sn.s);
+                ERROR("[merge] failed to add @SQ SN:%s to new header", sq_sn.s);
                 goto fail;
             }
         }
@@ -500,7 +500,7 @@ static klist_t(hdrln) * trans_rg_pg(bool is_rg, sam_hdr_t *translate,
                 char *idp = strstr(ks_str(&new_hdr_line), "\tID:"), *id_end;
                 ptrdiff_t id_offset, id_len;
                 if (!idp) {
-                    print_error("merge", "failed to find ID in \"%s\"\n",
+                    ERROR("[merge] failed to find ID in \"%s\"\n",
                                 ks_str(&new_hdr_line));
                     goto fail;
                 }
@@ -623,7 +623,7 @@ static int finish_rg_pg(bool is_rg, klist_t(hdrln) *hdr_lines,
             idx = kh_get(c2c, pg_map, id);
             if (idx == kh_end(pg_map)) {
                 // Not found, warn.
-                fprintf(stderr, "[W::%s] Tag %s%s not found in @PG records\n",
+                WARNING("[W::%s] Tag %s%s not found in @PG records",
                         __func__, search + 1, id);
             } else {
                 // Remember new id and splice points on original string
@@ -834,8 +834,7 @@ static void bam_translate(bam1_t* b, trans_tbl_t* tbl)
             }
         } else {
             char *tmp = strdup(decoded_rg);
-            fprintf(stderr,
-                    "[bam_translate] RG tag \"%s\" on read \"%s\" encountered "
+            ERROR("[bam_translate] RG tag \"%s\" on read \"%s\" encountered "
                     "with no corresponding entry in header, tag lost. "
                     "Unknown tags are only reported once per input file for "
                     "each tag ID.\n",
@@ -864,8 +863,7 @@ static void bam_translate(bam1_t* b, trans_tbl_t* tbl)
             }
         } else {
             char *tmp = strdup(decoded_pg);
-            fprintf(stderr,
-                    "[bam_translate] PG tag \"%s\" on read \"%s\" encountered "
+            ERROR("[bam_translate] PG tag \"%s\" on read \"%s\" encountered "
                     "with no corresponding entry in header, tag lost. "
                     "Unknown tags are only reported once per input file for "
                     "each tag ID.\n",
@@ -978,13 +976,13 @@ int bam_merge_core2(int by_qname, char* sort_tag, const char *out, const char *m
     if (headers) {
         samFile* fpheaders = sam_open(headers, "r");
         if (fpheaders == NULL) {
-            print_error_errno(cmd, "cannot open \"%s\"", headers);
+            ERROR("[%s] cannot open \"%s\"", cmd, headers);
             return -1;
         }
         hin = sam_hdr_read(fpheaders);
         sam_close(fpheaders);
         if (hin == NULL) {
-            print_error(cmd, "couldn't read headers from \"%s\"", headers);
+            ERROR("[%s] couldn't read headers from \"%s\"", cmd, headers);
             goto mem_fail;
         }
     }
@@ -1042,12 +1040,12 @@ int bam_merge_core2(int by_qname, char* sort_tag, const char *out, const char *m
         sam_hdr_t *hin;
         fp[i] = sam_open_format(fn[i], "r", in_fmt);
         if (fp[i] == NULL) {
-            print_error_errno(cmd, "fail to open \"%s\"", fn[i]);
+            ERROR("[%s] fail to open \"%s\"", cmd, fn[i]);
             goto fail;
         }
         hin = sam_hdr_read(fp[i]);
         if (hin == NULL) {
-            print_error(cmd, "failed to read header from \"%s\"", fn[i]);
+            ERROR("[%s] failed to read header from \"%s\"", cmd, fn[i]);
             goto fail;
         }
 
@@ -1063,7 +1061,7 @@ int bam_merge_core2(int by_qname, char* sort_tag, const char *out, const char *m
         else { sam_hdr_destroy(hin); hdr[i] = NULL; }
 
         if ((translation_tbl+i)->lost_coord_sort && !by_qname) {
-            fprintf(stderr, "[bam_merge_core] Order of targets in file %s caused coordinate sort to be lost\n", fn[i]);
+            ERROR("[bam_merge_core] Order of targets in file %s caused coordinate sort to be lost", fn[i]);
         }
 
         // Potential future improvement is to share headers between CRAM files for
@@ -1079,7 +1077,7 @@ int bam_merge_core2(int by_qname, char* sort_tag, const char *out, const char *m
 
     // Did we get an @HD line?
     if (!merged_hdr->have_hd) {
-        fprintf(stderr, "[W::%s] No @HD tag found.\n", __func__);
+        WARNING("[W::%s] No @HD tag found.", __func__);
         /* FIXME:  Should we add an @HD line here, and if so what should
            we put in it? Ideally we want a way of getting htslib to tell
            us the SAM version number to assume given no @HD line.  Is
@@ -1120,7 +1118,7 @@ int bam_merge_core2(int by_qname, char* sort_tag, const char *out, const char *m
         }
         if (tid < 0) {
             if (name_lim) fprintf(stderr, "[%s] Region \"%s\" specifies an unknown reference name\n", __func__, reg);
-            else fprintf(stderr, "[%s] Badly formatted region: \"%s\"\n", __func__, reg);
+            else ERROR("[%s] Badly formatted region: \"%s\"", __func__, reg);
             goto fail;
         }
         for (i = 0; i < n; ++i) {
@@ -1134,7 +1132,7 @@ int bam_merge_core2(int by_qname, char* sort_tag, const char *out, const char *m
             // (rtrans[i*n+tid]) Look up what hout tid translates to in input tid space
             int mapped_tid = rtrans[i*sam_hdr_nref(hout)+tid];
             if (idx == NULL) {
-                fprintf(stderr, "[%s] failed to load index for %s.  Random alignment retrieval only works for indexed BAM or CRAM files.\n",
+                ERROR("[%s] failed to load index for %s.  Random alignment retrieval only works for indexed BAM or CRAM files.",
                         __func__, fn[i]);
                 goto fail;
             }
@@ -1146,13 +1144,11 @@ int bam_merge_core2(int by_qname, char* sort_tag, const char *out, const char *m
             hts_idx_destroy(idx);
             if (iter[i] == NULL) {
                 if (mapped_tid != INT32_MIN) {
-                    fprintf(stderr,
-                            "[%s] failed to get iterator over "
+                    ERROR("[%s] failed to get iterator over "
                             "{%s, %d, %d, %d}\n",
                             __func__, fn[i], mapped_tid, beg, end);
                 } else {
-                    fprintf(stderr,
-                            "[%s] failed to get iterator over "
+                    ERROR("[%s] failed to get iterator over "
                             "{%s, HTS_IDX_NONE, 0, 0}\n",
                             __func__, fn[i]);
                 }
@@ -1166,7 +1162,7 @@ int bam_merge_core2(int by_qname, char* sort_tag, const char *out, const char *m
             if (hdr[i] == NULL) {
                 iter[i] = sam_itr_queryi(NULL, HTS_IDX_REST, 0, 0);
                 if (iter[i] == NULL) {
-                    fprintf(stderr, "[%s] failed to get iterator\n", __func__);
+                    ERROR("[%s] failed to get iterator\n", __func__);
                     goto fail;
                 }
             }
@@ -1200,14 +1196,14 @@ int bam_merge_core2(int by_qname, char* sort_tag, const char *out, const char *m
             h->entry.bam_record = NULL;
             h->entry.u.tag = NULL;
         } else {
-            print_error(cmd, "failed to read first record from \"%s\"", fn[i]);
+            ERROR("[%s] failed to read first record from \"%s\"", cmd, fn[i]);
             goto fail;
         }
     }
 
     // Open output file and write header
     if ((fpout = sam_open_format(out, mode, out_fmt)) == 0) {
-        print_error_errno(cmd, "failed to create \"%s\"", out);
+        ERROR("[%s] failed to create \"%s\"", cmd, out);
         return -1;
     }
     if (!no_pg && sam_hdr_add_pg(hout, "samtools",
@@ -1215,12 +1211,12 @@ int bam_merge_core2(int by_qname, char* sort_tag, const char *out, const char *m
                                  arg_list ? "CL": NULL,
                                  arg_list ? arg_list : NULL,
                                  NULL)) {
-        print_error(cmd, "failed to add PG line to the header of \"%s\"", out);
+        ERROR("[%s] failed to add PG line to the header of \"%s\"", cmd, out);
         sam_close(fpout);
         return -1;
     }
     if (sam_hdr_write(fpout, hout) != 0) {
-        print_error_errno(cmd, "failed to write header to \"%s\"", out);
+        ERROR("[%s] failed to write header to \"%s\"", cmd, out);
         sam_close(fpout);
         return -1;
     }
@@ -1242,7 +1238,7 @@ int bam_merge_core2(int by_qname, char* sort_tag, const char *out, const char *m
             bam_aux_append(b, "RG", 'Z', RG_len[heap->i] + 1, (uint8_t*)RG[heap->i]);
         }
         if (sam_write1(fpout, hout, b) < 0) {
-            print_error_errno(cmd, "failed writing to \"%s\"", out);
+            ERROR("[%s] failed writing to \"%s\"", cmd, out);
             sam_close(fpout);
             free(out_idx_fn);
             return -1;
@@ -1263,7 +1259,7 @@ int bam_merge_core2(int by_qname, char* sort_tag, const char *out, const char *m
             heap->entry.bam_record = NULL;
             heap->entry.u.tag = NULL;
         } else {
-            print_error(cmd, "\"%s\" is truncated", fn[heap->i]);
+            ERROR("[%s] \"%s\" is truncated", cmd, fn[heap->i]);
             goto fail;
         }
         ks_heapadjust(heap, 0, n, heap);
@@ -1271,7 +1267,7 @@ int bam_merge_core2(int by_qname, char* sort_tag, const char *out, const char *m
 
     if (write_index) {
         if (sam_idx_save(fpout) < 0) {
-            print_error_errno("merge", "writing index failed");
+            ERROR("%s", "[merge] writing index failed");
             goto fail;
         }
     }
@@ -1293,13 +1289,13 @@ int bam_merge_core2(int by_qname, char* sort_tag, const char *out, const char *m
     free_merged_header(merged_hdr);
     free(RG); free(translation_tbl); free(fp); free(heap); free(iter); free(hdr);
     if (sam_close(fpout) < 0) {
-        print_error(cmd, "error closing output file");
+        ERROR("[%s] error closing output file", cmd);
         return -1;
     }
     return 0;
 
  mem_fail:
-    print_error(cmd, "Out of memory");
+    ERROR("[%s]", "Out of memory");
 
  fail:
     if (flag & MERGE_RG) {
@@ -1402,7 +1398,7 @@ int bam_merge(int argc, char *argv[])
         case 'b': {
             // load the list of files to read
             if (has_index_file) {
-                fprintf(stderr,"Error: The -b option cannot be combined with -X\n");
+                ERROR("%s","Error: The -b option cannot be combined with -X");
                 ret = 1; goto end;
             }
             int nfiles;
@@ -1416,7 +1412,7 @@ int bam_merge(int argc, char *argv[])
                 free(fn_read);
             }
             else {
-                print_error("merge", "Invalid file list \"%s\"", optarg);
+                ERROR("[merge] Invalid file list \"%s\"", optarg);
                 ret = 1;
             }
             break;
@@ -1428,13 +1424,13 @@ int bam_merge(int argc, char *argv[])
         }
     }
     if ( argc - optind < 1 ) {
-        print_error("merge", "You must at least specify the output file");
+        ERROR("%s", "[merge] You must at least specify the output file");
         merge_usage(stderr);
         return 1;
     }
 
     if (!no_pg && !(arg_list = stringify_argv(argc+1, argv-1))) {
-        print_error("merge", "failed to create arg_list");
+        ERROR("%s", "[merge] failed to create arg_list");
         return 1;
     }
 
@@ -1443,7 +1439,7 @@ int bam_merge(int argc, char *argv[])
         FILE *fp = fopen(argv[optind], "rb");
         if (fp != NULL) {
             fclose(fp);
-            fprintf(stderr, "[%s] File '%s' exists. Please apply '-f' to overwrite. Abort.\n", __func__, argv[optind]);
+            ERROR("[%s] File '%s' exists. Please apply '-f' to overwrite. Abort.", __func__, argv[optind]);
             return 1;
         }
     }
@@ -1451,7 +1447,7 @@ int bam_merge(int argc, char *argv[])
     int nargcfiles = 0;
     if (has_index_file) { // Calculate # of input BAM files
         if ((argc - optind - 1) % 2 != 0) {
-            fprintf(stderr, "Odd number of filenames detected! Each BAM file should have an index file\n");
+            ERROR("%s", "[merge] Odd number of filenames detected! Each BAM file should have an index file");
             return 1;
         }
         nargcfiles = (argc - optind - 1) / 2;
@@ -1472,7 +1468,7 @@ int bam_merge(int argc, char *argv[])
         }
     }
     if (fn_size+nargcfiles < 1) {
-        print_error("merge", "You must specify at least one (and usually two or more) input files");
+        ERROR("%s", "[merge] You must specify at least one (and usually two or more) input files");
         merge_usage(stderr);
         free(fn_idx);
         return 1;
@@ -1578,14 +1574,14 @@ static int bam_merge_simple(int by_qname, char *sort_tag, const char *out,
         if (i < n) {
             fp[i] = sam_open_format(fn[i], "r", in_fmt);
             if (fp[i] == NULL) {
-                print_error_errno(cmd, "fail to open \"%s\"", fn[i]);
+                ERROR("[%s] fail to open \"%s\"", cmd, fn[i]);
                 goto fail;
             }
 
             // Read header ...
             hin = sam_hdr_read(fp[i]);
             if (hin == NULL) {
-                print_error(cmd, "failed to read header from \"%s\"", fn[i]);
+                ERROR("[%s] failed to read header from \"%s\"", cmd, fn[i]);
                 goto fail;
             }
             // ... and throw it away as we don't really need it
@@ -1601,14 +1597,14 @@ static int bam_merge_simple(int by_qname, char *sort_tag, const char *out,
         }
         if (heap_add_read(h, n, fp, num_in_mem, in_mem, buf, &idx, hout) < 0) {
             assert(i < n);
-            print_error(cmd, "failed to read first record from \"%s\"", fn[i]);
+            ERROR("[%s] failed to read first record from \"%s\"", cmd, fn[i]);
             goto fail;
         }
     }
 
     // Open output file and write header
     if ((fpout = sam_open_format(out, mode, out_fmt)) == 0) {
-        print_error_errno(cmd, "failed to create \"%s\"", out);
+        ERROR("[%s] failed to create \"%s\"", cmd, out);
         return -1;
     }
 
@@ -1617,7 +1613,7 @@ static int bam_merge_simple(int by_qname, char *sort_tag, const char *out,
                                  arg_list ? "CL": NULL,
                                  arg_list ? arg_list : NULL,
                                  NULL)) {
-        print_error(cmd, "failed to add PG line to the header of \"%s\"", out);
+        ERROR("[%s] failed to add PG line to the header of \"%s\"", cmd, out);
         sam_close(fpout);
         return -1;
     }
@@ -1625,7 +1621,7 @@ static int bam_merge_simple(int by_qname, char *sort_tag, const char *out,
     if (n_threads > 1) hts_set_threads(fpout, n_threads);
 
     if (sam_hdr_write(fpout, hout) != 0) {
-        print_error_errno(cmd, "failed to write header to \"%s\"", out);
+        ERROR("[%s] failed to write header to \"%s\"", cmd, out);
         sam_close(fpout);
         return -1;
     }
@@ -1635,14 +1631,14 @@ static int bam_merge_simple(int by_qname, char *sort_tag, const char *out,
     while (heap->pos != HEAP_EMPTY) {
         bam1_t *b = heap->entry.bam_record;
         if (sam_write1(fpout, hout, b) < 0) {
-            print_error_errno(cmd, "failed writing to \"%s\"", out);
+            ERROR("[%s] failed writing to \"%s\"", cmd, out);
             sam_close(fpout);
             return -1;
         }
         if (heap_add_read(heap, n, fp, num_in_mem, in_mem, buf, &idx, hout) < 0) {
             assert(heap->i < n);
-            print_error(cmd, "Error reading \"%s\" : %s",
-                        fn[heap->i], strerror(errno));
+            ERROR("[%s] Error reading \"%s\" : %s",
+                        cmd, fn[heap->i], strerror(errno));
             goto fail;
         }
         ks_heapadjust(heap, 0, heap_size, heap);
@@ -1650,19 +1646,19 @@ static int bam_merge_simple(int by_qname, char *sort_tag, const char *out,
     // Clean up and close
     for (i = 0; i < n; i++) {
         if (sam_close(fp[i]) != 0) {
-            print_error(cmd, "Error on closing \"%s\" : %s",
-                        fn[i], strerror(errno));
+            ERROR("[%s] Error on closing \"%s\" : %s",
+                        cmd, fn[i], strerror(errno));
         }
     }
     free(fp);
     free(heap);
     if (sam_close(fpout) < 0) {
-        print_error(cmd, "error closing output file");
+        ERROR("[%s] error closing output file", cmd);
         return -1;
     }
     return 0;
  mem_fail:
-    print_error(cmd, "Out of memory");
+    ERROR("[%s] Out of memory", cmd);
 
  fail:
     for (i = 0; i < n; i++) {
@@ -1854,7 +1850,7 @@ static int ks_radixsort(size_t n, bam1_tag *buf, const sam_hdr_t *h)
     buf_ar2[0] = buf;
     buf_ar2[1] = (bam1_tag *)malloc(sizeof(bam1_tag) * n);
     if (buf_ar2[1] == NULL) {
-        print_error("sort", "couldn't allocate memory for temporary buf");
+        ERROR("%s", "[sort] couldn't allocate memory for temporary buf");
         goto err;
     }
 
@@ -1973,7 +1969,7 @@ static int sort_blocks(int n_files, size_t k, bam1_tag *buf, const char *prefix,
         pthread_join(tid[i], 0);
         if (w[i].error != 0) {
             errno = w[i].error;
-            print_error_errno("sort", "failed to create temporary file \"%s.%.4d.bam\"", prefix, w[i].index);
+            ERROR("[sort] failed to create temporary file \"%s.%.4d.bam\"", prefix, w[i].index);
             n_failed++;
         }
     }
@@ -2022,7 +2018,7 @@ int bam_sort_core_ext(int is_by_qname, char* sort_by_tag, const char *fn, const 
     int num_in_mem = 0;
 
     if (!b) {
-        print_error("sort", "couldn't allocate memory for bam record");
+        ERROR("%s", "[sort] couldn't allocate memory for bam record");
         return -1;
     }
 
@@ -2038,12 +2034,12 @@ int bam_sort_core_ext(int is_by_qname, char* sort_by_tag, const char *fn, const 
     buf = NULL;
     fp = sam_open_format(fn, "r", in_fmt);
     if (fp == NULL) {
-        print_error_errno("sort", "can't open \"%s\"", fn);
+        ERROR("[sort] Can't open \"%s\"", fn);
         goto err;
     }
     header = sam_hdr_read(fp);
     if (header == NULL) {
-        print_error("sort", "failed to read header from \"%s\"", fn);
+        ERROR("[sort] failed to read header from \"%s\"", fn);
         goto err;
     }
 
@@ -2057,12 +2053,12 @@ int bam_sort_core_ext(int is_by_qname, char* sort_by_tag, const char *fn, const 
     if ((-1 == sam_hdr_update_hd(header, "SO", new_so))
      && (-1 == sam_hdr_add_line(header, "HD", "VN", SAM_FORMAT_VERSION, "SO", new_so, NULL))
      ) {
-        print_error("sort", "failed to change sort order header to '%s'\n", new_so);
+        ERROR("[sort] failed to change sort order header to '%s'", new_so);
         goto err;
     }
 
     if (-1 == sam_hdr_remove_tag_hd(header, "GO")) {
-        print_error("sort", "failed to delete group order header\n");
+        ERROR("%s", "[sort] failed to delete group order header");
         goto err;
     }
 
@@ -2073,7 +2069,7 @@ int bam_sort_core_ext(int is_by_qname, char* sort_by_tag, const char *fn, const 
         hts_set_threads(fp, n_threads);
 
     if ((bam_mem = malloc(max_mem)) == NULL) {
-        print_error("sort", "couldn't allocate memory for bam_mem");
+        ERROR("%s", "[sort] couldn't allocate memory for bam_mem");
         goto err;
     }
 
@@ -2086,7 +2082,7 @@ int bam_sort_core_ext(int is_by_qname, char* sort_by_tag, const char *fn, const 
             bam1_tag *new_buf;
             max_k = max_k? max_k<<1 : 0x10000;
             if ((new_buf = realloc(buf, max_k * sizeof(bam1_tag))) == NULL) {
-                print_error("sort", "couldn't allocate memory for buf");
+                ERROR("%s", "[sort] couldn't allocate memory for buf");
                 goto err;
             }
             buf = new_buf;
@@ -2128,7 +2124,7 @@ int bam_sort_core_ext(int is_by_qname, char* sort_by_tag, const char *fn, const 
         }
     }
     if (res != -1) {
-        print_error("sort", "truncated file. Aborting");
+        ERROR("%s", "[sort] truncated file. Aborting");
         goto err;
     }
 
@@ -2146,12 +2142,11 @@ int bam_sort_core_ext(int is_by_qname, char* sort_by_tag, const char *fn, const 
     // write the final output
     if (n_files == 0 && num_in_mem < 2) { // a single block
         if (write_buffer(fnout, modeout, k, buf, header, n_threads, out_fmt, arg_list, no_pg) != 0) {
-            print_error_errno("sort", "failed to create \"%s\"", fnout);
+            ERROR("[sort] failed to create \"%s\"", fnout);
             goto err;
         }
     } else { // then merge
-        fprintf(stderr,
-                "[bam_sort_core] merging from %d files and %d in-memory blocks...\n",
+        ERROR("[bam_sort_core] merging from %d files and %d in-memory blocks...",
                 n_files, num_in_mem);
         fns = (char**)calloc(n_files, sizeof(char*));
         if (!fns) goto err;
@@ -2284,7 +2279,7 @@ int bam_sort(int argc, char *argv[])
     else if (nargs >= 2) {
         // If exactly two, user probably tried to specify legacy <out.prefix>
         if (nargs == 2)
-            fprintf(stderr, "[bam_sort] Use -T PREFIX / -o FILE to specify temporary and final output files\n");
+            ERROR("%s", "[bam_sort] Use -T PREFIX / -o FILE to specify temporary and final output files");
 
         sort_usage(stderr);
         ret = EXIT_FAILURE;
@@ -2292,7 +2287,7 @@ int bam_sort(int argc, char *argv[])
     }
 
     if (!no_pg && !(arg_list = stringify_argv(argc+1, argv-1))) {
-        print_error("sort", "failed to create arg_list");
+        ERROR("%s", "[sort] failed to create arg_list");
         return 1;
     }
 
@@ -2326,7 +2321,7 @@ int bam_sort(int argc, char *argv[])
         // If we failed on opening the input file & it has no .bam/.cram/etc
         // extension, the user probably tried legacy -o <infile> <out.prefix>
         if (ret == -2 && o_seen && nargs > 0 && sam_open_mode(dummy, argv[optind], NULL) < 0)
-            fprintf(stderr, "[bam_sort] Note the <out.prefix> argument has been replaced by -T/-o options\n");
+            ERROR("%s", "[bam_sort] Note the <out.prefix> argument has been replaced by -T/-o options");
 
         ret = EXIT_FAILURE;
     }
