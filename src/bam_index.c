@@ -55,6 +55,8 @@ static void index_usage(FILE *fp)
 
 int bam_index(int argc, char *argv[])
 {
+    INFO("[%s] %s\n", __func__, "started");
+
     int csi = 0;
     int min_shift = BAM_LIDX_SHIFT;
     int n_threads = 0;

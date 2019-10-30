@@ -2232,6 +2232,8 @@ static void complain_about_memory_setting(size_t max_mem) {
 
 int bam_sort(int argc, char *argv[])
 {
+    INFO("[%s] %s\n", __func__, "started");
+
     size_t max_mem = SORT_DEFAULT_MEGS_PER_THREAD << 20;
     int c, nargs, is_by_qname = 0, ret, o_seen = 0, level = -1, no_pg = 0;
     char* sort_tag = NULL, *arg_list = NULL;

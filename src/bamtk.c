@@ -32,6 +32,8 @@ DEALINGS IN THE SOFTWARE.  */
 #include <htslib/hts.h>
 #include "samtools.h"
 #include "version.h"
+#include "samtoolmisc.h"
+#include "logger.h"
 #include "interface.h"
 
 int bam_taf2baf(int argc, char *argv[]);
@@ -146,6 +148,9 @@ int _CRT_glob = 0;
 
 int init_samtools(int argc, char *argv[])
 {
+
+    double realtime0 = realtime();
+
 #ifdef _WIN32
     setmode(fileno(stdout), O_BINARY);
     setmode(fileno(stdin),  O_BINARY);
@@ -221,5 +226,9 @@ int init_samtools(int argc, char *argv[])
         fprintf(stderr, "[main] unrecognized command '%s'\n", argv[1]);
         return 1;
     }
+
+    INFO("[%s] Real time: %.3f sec; CPU time: %.3f sec; Peak RAM: %.3f GB\n\n",
+         __func__, realtime() - realtime0, cputime(),peakrss() / 1024.0 / 1024.0 / 1024.0);
+
     return ret;
 }
